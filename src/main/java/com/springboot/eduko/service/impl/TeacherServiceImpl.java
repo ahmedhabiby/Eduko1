@@ -2,6 +2,7 @@ package com.springboot.eduko.service.impl;
 
 import com.springboot.eduko.controller.vms.AuthTeacherResponse;
 import com.springboot.eduko.controller.vms.TeacherData;
+import com.springboot.eduko.controller.vms.UpdatableTeacher;
 import com.springboot.eduko.dtos.TeacherDto;
 import com.springboot.eduko.mapper.TeacherMapper;
 import com.springboot.eduko.model.BaseUser;
@@ -72,6 +73,22 @@ public class TeacherServiceImpl implements TeacherService {
                 baseUser.getEmail(),
                 teacher.getTeacherName()
         );
+    }
+
+    @Override
+    public UpdatableTeacher updateTeacher(AuthTeacherResponse authTeacherResponse) {
+        Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+        String email = Objects.requireNonNull(authentication).getName();
+        BaseUser baseUser=baseUserRepo.findBaseUsersByEmail(email);
+        BaseUser baseUser1=baseUserRepo.findBaseUsersByEmail(authTeacherResponse.getEmail());
+        if(Objects.nonNull(baseUser1)&& !Objects.equals(baseUser,baseUser1))
+            throw new RuntimeException("email.used");
+        baseUser.setEmail(authTeacherResponse.getEmail());
+        BaseUser returnedUser=baseUserRepo.save(baseUser);
+        Teacher teacher = teacherRepo.getTeacherById(baseUser.getTeacher().getId());
+        teacher.setTeacherName(authTeacherResponse.getTeacherName());
+        Teacher returnedTeacher=teacherRepo.save(teacher);
+        return new UpdatableTeacher(returnedTeacher.getId(),returnedUser.getEmail(),returnedTeacher.getTeacherName());
     }
 
 }

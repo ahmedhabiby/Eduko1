@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Response signupForStudent(SignupRequestForStudent signupRequestForStudent) {
         BaseUserDto baseUserDto=new BaseUserDto();
-        BaseUserDto baseUserDto1= baseUserService.getUserByEmail(signupRequestForStudent.getEmail());
+        BaseUser baseUserDto1= baseUserRepo.findBaseUsersByEmail(signupRequestForStudent.getEmail());
         if(Objects.nonNull(baseUserDto1))
             throw new RuntimeException("Student.already.exist");
         baseUserDto.setEmail(signupRequestForStudent.getEmail());
@@ -100,8 +100,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Response signupForTeacher(SignupRequestForTeachers signupRequestForTeachers) {
         BaseUserDto baseUserDto=new BaseUserDto();
-        BaseUserDto baseUserDto1= baseUserService.getUserByEmail(signupRequestForTeachers.getEmail());
-        if(Objects.nonNull(baseUserDto1))
+        BaseUser baseUserDto1= baseUserRepo.findBaseUsersByEmail(signupRequestForTeachers.getEmail());        if(Objects.nonNull(baseUserDto1))
             throw new RuntimeException("teacher.already.exist");
         baseUserDto.setEmail(signupRequestForTeachers.getEmail());
         baseUserDto.setPassword(passwordEncoder.encode(signupRequestForTeachers.getPassword()));

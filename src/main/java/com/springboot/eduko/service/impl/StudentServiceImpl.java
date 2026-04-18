@@ -2,6 +2,7 @@ package com.springboot.eduko.service.impl;
 
 import com.springboot.eduko.controller.vms.AuthStudentResponse;
 import com.springboot.eduko.controller.vms.StudentData;
+import com.springboot.eduko.controller.vms.UpdatableStudent;
 import com.springboot.eduko.dtos.StudentDto;
 import com.springboot.eduko.mapper.StudentMapper;
 import com.springboot.eduko.model.BaseUser;
@@ -18,9 +19,9 @@ import java.util.Objects;
 
 @Service
 public class StudentServiceImpl implements StudentService {
-    private StudentRepo studentRepo;
-    private StudentMapper studentMapper;
-    private BaseUserRepo baseUserRepo;
+    private final StudentRepo studentRepo;
+    private final StudentMapper studentMapper;
+    private final BaseUserRepo baseUserRepo;
 
     @Autowired
     public StudentServiceImpl(StudentRepo studentRepo, StudentMapper studentMapper,BaseUserRepo baseUserRepo) {
@@ -52,7 +53,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public AuthStudentResponse getAuthStudent() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String email = null;
+        if (authentication != null) {
+            email = authentication.getName();
+        }
 
         BaseUser baseUser = baseUserRepo.findBaseUsersByEmail(email);
 
@@ -75,5 +79,27 @@ public class StudentServiceImpl implements StudentService {
                 student.getParentNumber(),
                 student.getStudentNumber()
         );
+    }
+
+    @Override
+    public UpdatableStudent updateStudent(AuthStudentResponse authStudentResponse) {
+        Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+        String email = Objects.requireNonNull(authentication).getName();
+        BaseUser baseUser=baseUserRepo.findBaseUsersByEmail(email);
+        BaseUser baseUser1=baseUserRepo.findBaseUsersByEmail(authStudentResponse.getEmail());
+        if(Objects.nonNull(baseUser1)&& !Objects.equals(baseUser,baseUser1))
+            throw new RuntimeException("email.used");
+        baseUser.setEmail(authStudentResponse.getEmail());
+        BaseUser returnedUser=baseUserRepo.save(baseUser);
+        Student student = studentRepo.findById(baseUser.getStudent().getId()).orElseThrow();
+        student.setStudentNumber(authStudentResponse.getStudentNumber());
+        student.setFirstName(authStudentResponse.getFirstName());
+        student.setLastName(authStudentResponse.getLastName());
+        student.setParentName(authStudentResponse.getParentName());
+        student.setParentNumber(authStudentResponse.getParentNumber());
+        Student returnedStudent=studentRepo.save(student);
+        return new UpdatableStudent(returnedStudent.getId(), returnedStudent.getFirstName(),
+                returnedStudent.getLastName(), returnedUser.getEmail(), returnedStudent.getParentName(),
+                returnedStudent.getParentNumber(), returnedStudent.getStudentNumber());
     }
 }
