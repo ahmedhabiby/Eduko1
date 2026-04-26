@@ -83,9 +83,7 @@ public class AuthServiceImpl implements AuthService {
         EduRoles roles =roleRepo.findByRoleId(3L);
         if(Objects.isNull(roles))
             throw new RuntimeException("Role.not.found");
-        BaseUser baseUser = baseUserMapper.toEntity(baseUserDto);
-        if(Objects.isNull(roles))
-            throw new RuntimeException("Role.not.found");
+   
         BaseUser baseUser1 = baseUserMapper.toEntity(baseUserDto);
         baseUser1.setRoles(List.of(roles));
         StudentData studentData =new StudentData(signupRequestForStudent.getFirstName(), signupRequestForStudent.getLastName(), signupRequestForStudent.getParentName(), signupRequestForStudent.getParentNumber(), signupRequestForStudent.getStudentNumber());
@@ -100,14 +98,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Response signupForTeacher(SignupRequestForTeachers signupRequestForTeachers) {
         BaseUserDto baseUserDto=new BaseUserDto();
-        BaseUser baseUserDto1= baseUserRepo.findBaseUsersByEmail(signupRequestForTeachers.getEmail());        if(Objects.nonNull(baseUserDto1))
+        BaseUser baseUserDto1= baseUserRepo.findBaseUsersByEmail(signupRequestForTeachers.getEmail());
+        if(Objects.nonNull(baseUserDto1))
             throw new RuntimeException("teacher.already.exist");
         baseUserDto.setEmail(signupRequestForTeachers.getEmail());
         baseUserDto.setPassword(passwordEncoder.encode(signupRequestForTeachers.getPassword()));
         EduRoles roles =roleRepo.findByRoleId(2L);
-        if(Objects.isNull(roles))
-            throw new RuntimeException("Role.not.found");
-        BaseUser baseUser = baseUserMapper.toEntity(baseUserDto);
         if(Objects.isNull(roles))
             throw new RuntimeException("Role.not.found");
         BaseUser baseUser1 = baseUserMapper.toEntity(baseUserDto);

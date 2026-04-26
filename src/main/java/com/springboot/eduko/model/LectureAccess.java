@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Setter
-@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Enrollments extends BaseEntity {
+@Setter
+@Getter
+public class LectureAccess extends BaseEntity {
+    private int status;
     @ManyToOne
     private Student student;
     @ManyToOne
-    private EduCourses eduCourses;
+    private Lectures lectures;
 }

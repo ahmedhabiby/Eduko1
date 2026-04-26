@@ -1,5 +1,6 @@
 package com.springboot.eduko.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -19,7 +20,10 @@ public class Lectures extends BaseEntity{
     private String lectureLink;
     private String lectureTitle;
     @ManyToOne
+    @JsonBackReference
     private EduCourses eduCourses;
     @OneToMany(mappedBy = "lectures")
     private List<Assignments> assignments;
+    @OneToMany(mappedBy = "lectures")
+    private List<LectureAccess> lectureAccesses;
 }

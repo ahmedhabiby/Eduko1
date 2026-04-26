@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface TeacherRepo extends JpaRepository<Teacher,Long> {
     @Query("SELECT t from Teacher  t where t.id=:id")
     Teacher getTeacherById(@Param("id") Long id);
+
+    Teacher findTeacherByTeacherName(String teacherName);
 }

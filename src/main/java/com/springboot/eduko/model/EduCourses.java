@@ -24,5 +24,4 @@ public class EduCourses extends BaseEntity{
     private List<Enrollments> enrollments;
     @ManyToOne
     private Teacher teacher;
-
 }

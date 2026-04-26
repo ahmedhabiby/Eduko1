@@ -1,20 +1,17 @@
-package com.springboot.eduko.model;
+package com.springboot.eduko.dtos;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import com.springboot.eduko.model.EduCourses;
+import com.springboot.eduko.model.Student;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Enrollments extends BaseEntity {
-    @ManyToOne
+public class EnrollmentDto {
     private Student student;
-    @ManyToOne
     private EduCourses eduCourses;
 }

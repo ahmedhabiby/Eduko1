@@ -30,4 +30,6 @@ public class Student extends BaseEntity{
     private List<ExamResult> examResultList;
     @OneToMany(mappedBy = "student")
     private List<Submissions> submissionsList;
+    @OneToMany(mappedBy = "student")
+    private List<LectureAccess> lectureAccesses;
 }
