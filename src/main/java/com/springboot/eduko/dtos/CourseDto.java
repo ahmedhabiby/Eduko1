@@ -23,7 +23,6 @@ public class CourseDto {
     private Long id;
     private String courseTitle;
     private String courseLink;
-    @JsonIgnore
     private List<Lectures> lectures;
     @JsonIgnore
     private List<Enrollments> enrollments;

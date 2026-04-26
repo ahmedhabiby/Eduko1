@@ -1,5 +1,6 @@
 package com.springboot.eduko.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.springboot.eduko.model.EduCourses;
 import com.springboot.eduko.model.Student;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,8 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EnrollmentDto {
-    private Student student;
-    private EduCourses eduCourses;
+    private StudentDto student;
+    private CourseDto eduCourses;
 }

@@ -1,5 +1,6 @@
 package com.springboot.eduko.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springboot.eduko.model.BaseUser;
 import com.springboot.eduko.model.EduRoles;
 import jakarta.validation.constraints.Email;
@@ -42,6 +43,7 @@ public class StudentDto {
     @Pattern(regexp = "\\d+", message = "StudentData number must contain only digits")
     @Size(min = 6, max = 10, message = "StudentData number must be 6 to 10 digits")
     private String studentNumber;
+    @JsonIgnore
     private BaseUser baseUser;
 
 }
