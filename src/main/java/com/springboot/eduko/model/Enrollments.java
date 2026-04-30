@@ -13,8 +13,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Enrollments extends BaseEntity {
+
     @ManyToOne
     private Student student;
+
     @ManyToOne
     private EduCourses eduCourses;
+
+    private String status; // "active" | "completed" | "expired"
 }
