@@ -36,18 +36,27 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // Auth endpoints
+
+                        // ── Student auth ──────────────────────────────────────────
                         .requestMatchers("/login", "/auth/login").permitAll()
                         .requestMatchers("/signup", "/auth/register").permitAll()
                         .requestMatchers("/signupForTeacher", "/auth/register/teacher").permitAll()
                         .requestMatchers("/forgot-password", "/auth/forgot-password").permitAll()
                         .requestMatchers("/reset-password", "/auth/reset-password").permitAll()
                         .requestMatchers("/resetPass").permitAll()
-                        // Swagger UI
+
+                        // ── Admin auth (public — login doesn't need a token) ──────
+                        .requestMatchers("/admin/auth/login").permitAll()
+
+                        // ── Swagger UI ────────────────────────────────────────────
                         .requestMatchers(
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml"
                         ).permitAll()
+
+                        // ── Everything else requires authentication ────────────────
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
@@ -57,6 +66,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .sessionManagement(AbstractHttpConfigurer::disable)
                 .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -65,9 +75,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",            // EDUKO Student Platform dev
-                "http://localhost:5174",            // EDUKO Admin dev
+                "http://localhost:5174",            // EDUKO Admin Panel dev
                 "http://localhost:3000",            // alternate dev port
-                "https://eduko.vercel.app"          // production (update when deployed)
+                "https://eduko.vercel.app",         // student production
+                "https://eduko-admin.vercel.app"    // admin production (update when deployed)
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
