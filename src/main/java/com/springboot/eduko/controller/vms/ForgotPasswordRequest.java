@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EnrollRequest {
-    // studentEmail removed — student is resolved from JWT token
-    private Long courseId;
+public class ForgotPasswordRequest {
+    private String email;
 }
