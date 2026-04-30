@@ -9,5 +9,6 @@ public interface AuthService {
     Response signupForStudent(SignupRequestForStudent signupRequestForStudent);
     Response signupForTeacher(SignupRequestForTeachers signupRequestForTeachers);
     LogoutResponse logout( );
+    ResetPassword changePassword(RequestForNewPass requestForNewPass);
 
 }

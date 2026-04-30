@@ -125,4 +125,18 @@ public class AuthServiceImpl implements AuthService {
         }
         return new LogoutResponse(true);
     }
+
+    @Override
+    public ResetPassword changePassword(RequestForNewPass requestForNewPass) {
+        BaseUser baseUser=baseUserRepo.findBaseUsersByEmail(requestForNewPass.getEmail());
+        if(Objects.isNull(baseUser))
+            throw new RuntimeException("user.not.found");
+        String token = handleToken.generateTokenForResetPassword(baseUserMapper.toDto(baseUser));
+        BaseUserDto baseUserDto=handleToken.validateToken(token);
+        if (Objects.isNull(baseUserDto))
+            throw new RuntimeException("user.not.found");
+        baseUser.setPassword(passwordEncoder.encode(requestForNewPass.getNewPassword()));
+        baseUserRepo.save(baseUser);
+        return new ResetPassword("password changed successfully");
+    }
 }

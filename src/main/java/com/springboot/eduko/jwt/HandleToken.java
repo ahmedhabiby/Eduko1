@@ -45,6 +45,14 @@ public class HandleToken {
                 .claim("roles",baseUserDto.getRoles().stream().map(role->new SimpleGrantedAuthority("Role_"+role.getRole())).toList())
                 .compact();
     }
+    public String generateTokenForResetPassword(BaseUserDto baseUserDto){
+        return jwtBuilder
+                .setSubject(baseUserDto.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(5))))
+                .claim("roles",baseUserDto.getRoles().stream().map(role->new SimpleGrantedAuthority("Role_"+role.getRole())).toList())
+                .compact();
+    }
     public BaseUserDto validateToken(String token){
         if(!jwtParser.isSigned(token))
             throw new RuntimeException("Token.not.valid");

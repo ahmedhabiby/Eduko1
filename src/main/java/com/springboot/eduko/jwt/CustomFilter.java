@@ -32,8 +32,8 @@ public class CustomFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
                    String token=request.getHeader("Authorization");
                    if (Objects.isNull(token) || !token.startsWith("Bearer ")) {
-                       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token.not.found");
-                       throw new RuntimeException("Token.not.found");
+                       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token.not.valid");
+                       throw new RuntimeException("Token.not.valid");
                    }
                    token=token.substring(7);
                    if(tokenBlackListService.isBlackList(token)){
@@ -62,6 +62,7 @@ public class CustomFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getRequestURI().contains("/login") || request.getRequestURI().contains("/signup");
+        return request.getRequestURI().contains("/login") || request.getRequestURI().contains("/signup")|| request.getRequestURI().contains("/resetPass")||
+                request.getRequestURI().contains("/v3/api-docs")|| request.getRequestURI().contains("/swagger-ui");
     }
 }

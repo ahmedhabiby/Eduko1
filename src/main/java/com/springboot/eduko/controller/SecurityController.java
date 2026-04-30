@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,4 +37,9 @@ public class SecurityController {
     public ResponseEntity<LogoutResponse> logout() throws URISyntaxException {
         return ResponseEntity.created(new URI("/logout")).body(authService.logout());
     }
-}
+    @PutMapping("/resetPass")
+    public ResponseEntity<ResetPassword> changePassword(@RequestBody RequestForNewPass requestForNewPass) throws URISyntaxException {
+        return ResponseEntity.created(new URI("/resetPass")).body(authService.changePassword(requestForNewPass));
+    }
+
+    }
