@@ -56,7 +56,7 @@ public class AdminPaymentController {
         return m;
     }
 
-    // ═════════════════════ /admin/payments ══════════════════════
+    // ═════════════════════ /admin/payments ═════════════════════
 
     @Operation(summary = "List all payments (approved proofs + enrollment payment info)")
     @GetMapping("/payments")
@@ -68,7 +68,7 @@ public class AdminPaymentController {
         return ResponseEntity.ok(Map.of("payments", payments));
     }
 
-    // ═════════════════════ /admin/payments/approvals ═══════════════
+    // ═════════════════════ /admin/payments/approvals ═════════════
 
     @Operation(summary = "List pending payment proofs awaiting admin review")
     @GetMapping("/payments/approvals")
@@ -88,7 +88,6 @@ public class AdminPaymentController {
             proof.setReviewedAt(LocalDateTime.now().toString());
             paymentProofRepo.save(proof);
 
-            // Sync enrollment
             if (proof.getStudent() != null && proof.getCourse() != null) {
                 enrollmentRepo
                         .findByStudentIdAndEduCoursesId(
@@ -121,7 +120,6 @@ public class AdminPaymentController {
                 proof.setRejectReason(body.get("reason"));
             paymentProofRepo.save(proof);
 
-            // Sync enrollment
             if (proof.getStudent() != null && proof.getCourse() != null) {
                 enrollmentRepo
                         .findByStudentIdAndEduCoursesId(
@@ -138,10 +136,11 @@ public class AdminPaymentController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    // ═════════════════════ /admin/proofs ═══════════════════─
+    // ═════════════════════ /admin/proofs + /admin/payment-proofs (alias) ═══════
 
-    @Operation(summary = "List all payment proofs (all statuses)")
-    @GetMapping("/proofs")
+    @Operation(summary = "List all payment proofs (all statuses)",
+               description = "Accessible via /admin/proofs and /admin/payment-proofs")
+    @GetMapping({"/proofs", "/payment-proofs"})
     public ResponseEntity<Map<String, Object>> listAllProofs() {
         var proofs = paymentProofRepo.findAllByOrderByCreatedAtDesc()
                 .stream().map(this::toProofMap).toList();
@@ -149,8 +148,9 @@ public class AdminPaymentController {
     }
 
     @Operation(summary = "Student submits payment proof",
-               description = "Used by student-facing API. Creates a PaymentProof with status=pending.")
-    @PostMapping("/proofs")
+               description = "Creates a PaymentProof with status=pending. " +
+                             "Accessible via /admin/proofs and /admin/payment-proofs")
+    @PostMapping({"/proofs", "/payment-proofs"})
     public ResponseEntity<Map<String, Object>> submitProof(@RequestBody Map<String, Object> body) {
         PaymentProof proof = new PaymentProof();
         proof.setProofUrl((String) body.get("proofUrl"));
