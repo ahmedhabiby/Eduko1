@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface CourseModuleRepo extends JpaRepository<CourseModule, Long> {
 
-    /** All modules for a course ordered by display order. */
-    List<CourseModule> findByCourseidOrderByOrder(Long courseId);
+    List<CourseModule> findByCourseIdOrderByOrder(Long courseId);
 }
