@@ -29,16 +29,16 @@
 
 | File | Type | Reason |
 |---|---|---|
-| `controller/vms/AuthResponse.java` | ✨ New | Response shape `{ token, user: { id, name, email, role, avatar } }` required by Frontend |
-| `service/AuthService.java` | ✏️ Updated | Changed return type to `AuthResponse` |
-| `service/impl/AuthServiceImpl.java` | ✏️ Updated | Build and return `AuthResponse` on login/register |
-| `controller/SecurityController.java` | ✏️ Updated | Added RESTful aliases: `/auth/login`, `/auth/register`, `/auth/logout`, `/auth/forgot-password`, `/auth/reset-password` |
-| `config/SecurityConfig.java` | ✏️ Updated | Added CORS config + permit `/auth/**` and `/admin/auth/**` without JWT |
-| `controller/vms/SignupRequestForStudent.java` | ✏️ Updated | Made `parentName`, `parentNumber`, `studentNumber` optional |
-| `controller/vms/EnrollRequest.java` | ✏️ Updated | Changed body from `{ studentEmail, courseTitle }` → `{ courseId }` |
-| `controller/vms/EnrollResponse.java` | ✏️ Updated | Expanded to `{ id, courseId, courseTitle, enrolledAt, status }` |
-| `controller/vms/ForgotPasswordRequest.java` | ✨ New | Request VM for `POST /auth/forgot-password` |
-| `controller/vms/ResetPasswordRequest.java` | ✨ New | Request VM for `PUT /auth/reset-password` |
+| `controller/vms/AuthResponse.java` |  New | Response shape `{ token, user: { id, name, email, role, avatar } }` required by Frontend |
+| `service/AuthService.java` |  Updated | Changed return type to `AuthResponse` |
+| `service/impl/AuthServiceImpl.java` |  Updated | Build and return `AuthResponse` on login/register |
+| `controller/SecurityController.java` |  Updated | Added RESTful aliases: `/auth/login`, `/auth/register`, `/auth/logout`, `/auth/forgot-password`, `/auth/reset-password` |
+| `config/SecurityConfig.java` | Updated | Added CORS config + permit `/auth/**` and `/admin/auth/**` without JWT |
+| `controller/vms/SignupRequestForStudent.java` | Updated | Made `parentName`, `parentNumber`, `studentNumber` optional |
+| `controller/vms/EnrollRequest.java` |  Updated | Changed body from `{ studentEmail, courseTitle }` → `{ courseId }` |
+| `controller/vms/EnrollResponse.java` |  Updated | Expanded to `{ id, courseId, courseTitle, enrolledAt, status }` |
+| `controller/vms/ForgotPasswordRequest.java` |  New | Request VM for `POST /auth/forgot-password` |
+| `controller/vms/ResetPasswordRequest.java` |  New | Request VM for `PUT /auth/reset-password` |
 
 ---
 
@@ -50,16 +50,16 @@
 
 | File | Type | Reason |
 |---|---|---|
-| `model/EduCourses.java` | ✏️ Updated | Added: `description`, `thumbnailUrl`, `price`, `currency`, `level`, `category`, `instructorName`, `rating`, `enrolledCount`, `status` |
-| `model/Enrollments.java` | ✏️ Updated | Added `status` field |
-| `dtos/CourseDto.java` | ✏️ Updated | Added all new course fields |
-| `controller/vms/CourseResponse.java` | ✏️ Updated | Added `id` + all new fields |
-| `service/impl/EnrollmentServiceImpl.java` | ✏️ Updated | Fixed `doEnrollments` to use `courseId` + JWT auth instead of `studentEmail/courseTitle` |
-| `controller/EnrollmentController.java` | ✏️ Updated | Added dual-path mapping + `@Tag/@Operation` + `PATCH /enrollments/{id}/progress` |
-| `controller/CourseController.java` | ✏️ Updated | Added dual-path `/courses` alias + `GET /courses/{id}` + Swagger annotations |
-| `controller/ProgressController.java` | ✨ New | New controller: `GET /progress` + `GET /progress/{courseId}` |
-| `controller/vms/ProgressResponse.java` | ✨ New | Response shape for progress endpoints |
-| `controller/vms/LessonProgressRequest.java` | ✨ New | Request body for lesson progress update |
+| `model/EduCourses.java` |  Updated | Added: `description`, `thumbnailUrl`, `price`, `currency`, `level`, `category`, `instructorName`, `rating`, `enrolledCount`, `status` |
+| `model/Enrollments.java` |  Updated | Added `status` field |
+| `dtos/CourseDto.java` | Updated | Added all new course fields |
+| `controller/vms/CourseResponse.java` | Updated | Added `id` + all new fields |
+| `service/impl/EnrollmentServiceImpl.java` | Updated | Fixed `doEnrollments` to use `courseId` + JWT auth instead of `studentEmail/courseTitle` |
+| `controller/EnrollmentController.java` | Updated | Added dual-path mapping + `@Tag/@Operation` + `PATCH /enrollments/{id}/progress` |
+| `controller/CourseController.java` | Updated | Added dual-path `/courses` alias + `GET /courses/{id}` + Swagger annotations |
+| `controller/ProgressController.java` | New | New controller: `GET /progress` + `GET /progress/{courseId}` |
+| `controller/vms/ProgressResponse.java` | New | Response shape for progress endpoints |
+| `controller/vms/LessonProgressRequest.java` | New | Request body for lesson progress update |
 
 ---
 
@@ -71,8 +71,8 @@
 
 | File | Type | Reason |
 |---|---|---|
-| `repo/LectureAccessRepo.java` | ✏️ Updated | Added queries: `findByStudentIdAndLecturesId`, `countByStudentId...AndStatus`, `findByStudentIdAndLecturesEduCoursesId` |
-| `service/impl/EnrollmentServiceImpl.java` | ✏️ Updated | Wired `LectureAccessRepo` + `LectureRepo` — real `progressPercent` from DB, removed all TODO placeholders |
+| `repo/LectureAccessRepo.java` | Updated | Added queries: `findByStudentIdAndLecturesId`, `countByStudentId...AndStatus`, `findByStudentIdAndLecturesEduCoursesId` |
+| `service/impl/EnrollmentServiceImpl.java` | Updated | Wired `LectureAccessRepo` + `LectureRepo` — real `progressPercent` from DB, removed all TODO placeholders |
 
 ---
 
@@ -84,17 +84,17 @@
 
 | File | Type | Reason |
 |---|---|---|
-| `model/BaseUser.java` | ✏️ Updated | Added `status` field (`active` / `inactive` / `banned`) |
-| `model/EduCourses.java` | ✏️ Updated | Added `titleAr`, `descriptionAr`, `requiresApproval` |
-| `model/Lectures.java` | ✏️ Updated | Added `titleAr`, `order`, `type`, `driveFileId`, `startTimestamp`, `endTimestamp`, `durationMin`, `isFreePreview` |
-| `model/Enrollments.java` | ✏️ Updated | Added `accessLevel`, `paymentStatus`, `paymentProofUrl`, `paymentAmount`, `paymentApprovedBy/At`, `accessGranted/ExpiresAt`, `completedAt` |
-| `model/CourseModule.java` | ✨ New | Entity for Course → Module → Lesson hierarchy |
-| `model/AuditLog.java` | ✨ New | Entity to record every Admin action |
-| `model/PaymentProof.java` | ✨ New | Entity for manual payment proof submission and review |
-| `repo/CourseModuleRepo.java` | ✨ New | JPA Repository for `CourseModule` |
-| `repo/AuditLogRepo.java` | ✨ New | JPA Repository for `AuditLog` |
-| `repo/PaymentProofRepo.java` | ✨ New | JPA Repository for `PaymentProof` |
-| `config/SecurityConfig.java` | ✏️ Updated | Added `/admin/**` secured block + `/admin/auth/**` public |
+| `model/BaseUser.java` | Updated | Added `status` field (`active` / `inactive` / `banned`) |
+| `model/EduCourses.java` | Updated | Added `titleAr`, `descriptionAr`, `requiresApproval` |
+| `model/Lectures.java` | Updated | Added `titleAr`, `order`, `type`, `driveFileId`, `startTimestamp`, `endTimestamp`, `durationMin`, `isFreePreview` |
+| `model/Enrollments.java` | Updated | Added `accessLevel`, `paymentStatus`, `paymentProofUrl`, `paymentAmount`, `paymentApprovedBy/At`, `accessGranted/ExpiresAt`, `completedAt` |
+| `model/CourseModule.java` | New | Entity for Course → Module → Lesson hierarchy |
+| `model/AuditLog.java` | New | Entity to record every Admin action |
+| `model/PaymentProof.java` | New | Entity for manual payment proof submission and review |
+| `repo/CourseModuleRepo.java` | New | JPA Repository for `CourseModule` |
+| `repo/AuditLogRepo.java` | New | JPA Repository for `AuditLog` |
+| `repo/PaymentProofRepo.java` | New | JPA Repository for `PaymentProof` |
+| `config/SecurityConfig.java` | Updated | Added `/admin/**` secured block + `/admin/auth/**` public |
 
 ---
 
@@ -106,11 +106,11 @@
 
 | File | Type | Reason |
 |---|---|---|
-| `repo/EnrollmentRepo.java` | ✏️ Updated | Added `findByEduCoursesId`, `countByStudentId`, `findByStudentIdAndEduCoursesId` |
-| `repo/LectureRepo.java` | ✏️ Updated | Added `findByModuleId`, `findByEduCoursesIdOrderByOrder` |
-| `repo/CourseModuleRepo.java` | ✏️ Updated | Fixed method name typo (`courseid` → `courseId`) |
-| `service/AuditLogService.java` | ✨ New | Interface: `log(actor, action, target)` |
-| `service/impl/AuditLogServiceImpl.java` | ✨ New | Implementation — auto-saves to `AuditLog` entity on every admin action |
+| `repo/EnrollmentRepo.java` | Updated | Added `findByEduCoursesId`, `countByStudentId`, `findByStudentIdAndEduCoursesId` |
+| `repo/LectureRepo.java` | Updated | Added `findByModuleId`, `findByEduCoursesIdOrderByOrder` |
+| `repo/CourseModuleRepo.java` | Updated | Fixed method name typo (`courseid` → `courseId`) |
+| `service/AuditLogService.java` | New | Interface: `log(actor, action, target)` |
+| `service/impl/AuditLogServiceImpl.java` | New | Implementation — auto-saves to `AuditLog` entity on every admin action |
 
 ---
 
@@ -122,9 +122,9 @@
 
 | File | Type | Reason |
 |---|---|---|
-| `controller/admin/AdminAuthController.java` | ✨ New | `POST /admin/auth/login` (validates ADMIN role + returns JWT) · `POST /admin/auth/logout` (blacklists token) |
-| `controller/admin/AdminUserController.java` | ✨ New | Full CRUD: `/admin/users`, `/admin/students`, `/admin/teachers`, reset-password, status management |
-| `controller/admin/AdminCourseController.java` | ✨ New | Full CRUD: `/admin/courses`, `/admin/courses/{id}/modules`, `/admin/courses/{id}/modules/{mid}/lessons` |
+| `controller/admin/AdminAuthController.java` | New | `POST /admin/auth/login` (validates ADMIN role + returns JWT) · `POST /admin/auth/logout` (blacklists token) |
+| `controller/admin/AdminUserController.java` | New | Full CRUD: `/admin/users`, `/admin/students`, `/admin/teachers`, reset-password, status management |
+| `controller/admin/AdminCourseController.java` | New | Full CRUD: `/admin/courses`, `/admin/courses/{id}/modules`, `/admin/courses/{id}/modules/{mid}/lessons` |
 
 ---
 
@@ -136,10 +136,10 @@
 
 | File | Type | Reason |
 |---|---|---|
-| `controller/admin/AdminEnrollmentController.java` | ✨ New | CRUD enrollments + `approve` / `reject` + access control endpoints |
-| `controller/admin/AdminPaymentController.java` | ✨ New | Review and approve/reject payment proofs · `/admin/payments` + `/admin/proofs` |
-| `controller/admin/AdminReportController.java` | ✨ New | `GET /admin/reports` — real platform statistics from DB (users, courses, enrollments) |
-| `controller/admin/AdminAuditController.java` | ✨ New | `GET /admin/audit-logs` — full paginated log of all admin actions |
+| `controller/admin/AdminEnrollmentController.java` | New | CRUD enrollments + `approve` / `reject` + access control endpoints |
+| `controller/admin/AdminPaymentController.java` | New | Review and approve/reject payment proofs · `/admin/payments` + `/admin/proofs` |
+| `controller/admin/AdminReportController.java` | New | `GET /admin/reports` — real platform statistics from DB (users, courses, enrollments) |
+| `controller/admin/AdminAuditController.java` | New | `GET /admin/audit-logs` — full paginated log of all admin actions |
 
 ---
 
@@ -149,10 +149,10 @@
 
 | File | Commit | Type | Reason |
 |---|---|---|---|
-| `controller/SecurityController.java` | [009e977](https://github.com/ahmedhabiby/Eduko1/commit/009e97718b4380c8fc4c1821b8950166ec69741c) | ✏️ Updated | Added `/auth/login` + `/auth/logout` aliases needed by the Admin Frontend |
-| `controller/admin/AdminUserController.java` | [1fa2ebb](https://github.com/ahmedhabiby/Eduko1/commit/1fa2ebb216678e56213f8b4594cedf341dd514f0) | ✏️ Updated | Added `POST /admin/users` to create student or teacher directly from Admin Panel |
-| `controller/admin/AdminEnrollmentController.java` | [4c934ec](https://github.com/ahmedhabiby/Eduko1/commit/4c934ec1a4041247bfcf1fc9a00ca301709fcded) | ✏️ Updated | Added `PATCH /admin/enrollments/{id}/progress` |
-| `controller/admin/AdminPaymentController.java` | [9cb367a](https://github.com/ahmedhabiby/Eduko1/commit/9cb367ad8aa16eb7affad4dfa4318f85858bd093) | ✏️ Updated | Added `/admin/payment-proofs` alias to match Frontend API path |
+| `controller/SecurityController.java` | [009e977](https://github.com/ahmedhabiby/Eduko1/commit/009e97718b4380c8fc4c1821b8950166ec69741c) | Updated | Added `/auth/login` + `/auth/logout` aliases needed by the Admin Frontend |
+| `controller/admin/AdminUserController.java` | [1fa2ebb](https://github.com/ahmedhabiby/Eduko1/commit/1fa2ebb216678e56213f8b4594cedf341dd514f0) | Updated | Added `POST /admin/users` to create student or teacher directly from Admin Panel |
+| `controller/admin/AdminEnrollmentController.java` | [4c934ec](https://github.com/ahmedhabiby/Eduko1/commit/4c934ec1a4041247bfcf1fc9a00ca301709fcded) | Updated | Added `PATCH /admin/enrollments/{id}/progress` |
+| `controller/admin/AdminPaymentController.java` | [9cb367a](https://github.com/ahmedhabiby/Eduko1/commit/9cb367ad8aa16eb7affad4dfa4318f85858bd093) | Updated | Added `/admin/payment-proofs` alias to match Frontend API path |
 
 ---
 
@@ -162,10 +162,10 @@
 
 | File | Commit | Type | Reason |
 |---|---|---|---|
-| `model/Favorite.java` | [032ded8](https://github.com/ahmedhabiby/Eduko1/commit/032ded8d19bee512101d0ae9840bd93b42076333) | ✨ New | Entity was missing — `FavoriteController` referenced it, causing compile failure |
-| `repo/FavoriteRepo.java` | [032ded8](https://github.com/ahmedhabiby/Eduko1/commit/032ded8d19bee512101d0ae9840bd93b42076333) | ✨ New | JPA Repo with `findByUserId`, `findByUserIdAndCourseId`, `deleteByUserIdAndCourseId` |
-| `controller/FavoriteController.java` | [c3a9ba0](https://github.com/ahmedhabiby/Eduko1/commit/c3a9ba03a630999689cb01d5dad3193325692673) | ✏️ Updated | Use `FavoriteRepo.deleteByUserIdAndCourseId` + enriched course fields in response |
-| `controller/CourseController.java` | [c3a9ba0](https://github.com/ahmedhabiby/Eduko1/commit/c3a9ba03a630999689cb01d5dad3193325692673) | ✏️ Updated | Added `defaultValue="0"` and `defaultValue="20"` to `page`/`size` — fixed 400 error when called without params |
+| `model/Favorite.java` | [032ded8](https://github.com/ahmedhabiby/Eduko1/commit/032ded8d19bee512101d0ae9840bd93b42076333) | New | Entity was missing — `FavoriteController` referenced it, causing compile failure |
+| `repo/FavoriteRepo.java` | [032ded8](https://github.com/ahmedhabiby/Eduko1/commit/032ded8d19bee512101d0ae9840bd93b42076333) | New | JPA Repo with `findByUserId`, `findByUserIdAndCourseId`, `deleteByUserIdAndCourseId` |
+| `controller/FavoriteController.java` | [c3a9ba0](https://github.com/ahmedhabiby/Eduko1/commit/c3a9ba03a630999689cb01d5dad3193325692673) | Updated | Use `FavoriteRepo.deleteByUserIdAndCourseId` + enriched course fields in response |
+| `controller/CourseController.java` | [c3a9ba0](https://github.com/ahmedhabiby/Eduko1/commit/c3a9ba03a630999689cb01d5dad3193325692673) | Updated | Added `defaultValue="0"` and `defaultValue="20"` to `page`/`size` — fixed 400 error when called without params |
 
 ---
 
@@ -177,7 +177,7 @@
 
 | File | Type | Reason |
 |---|---|---|
-| `swagger/ShowSwagger.java` | ✏️ Updated | Added: `@Server` (localhost + production URL) · `@SecurityScheme` BearerAuth JWT · global `@SecurityRequirement` · 13 ordered `@Tag` entries · version bumped to `v2.0` |
+| `swagger/ShowSwagger.java` | Updated | Added: `@Server` (localhost + production URL) · `@SecurityScheme` BearerAuth JWT · global `@SecurityRequirement` · 13 ordered `@Tag` entries · version bumped to `v2.0` |
 
 ---
 
