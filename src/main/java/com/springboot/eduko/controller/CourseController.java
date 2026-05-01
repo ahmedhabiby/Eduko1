@@ -38,12 +38,13 @@ public class CourseController {
 
     @Operation(
             summary = "Get all courses with pagination",
-            description = "Returns a paginated list of all published courses."
+            description = "Returns a paginated list of all published courses. " +
+                          "page defaults to 0, size defaults to 20."
     )
     @GetMapping({"/get/Pages/Courses", "/courses"})
     public ResponseEntity<Page<CourseDto>> getCourses(
-            @RequestParam int page,
-            @RequestParam int size) {
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(courseService.getCourses(page, size));
     }
 
