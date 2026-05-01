@@ -12,8 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
-@Tag(name = "Enrollments", description = "Course enrollment management")
+@Tag(name = "Enrollments", description = "Course enrollment management for the authenticated student")
 @RestController
 public class EnrollmentController {
 
@@ -24,27 +25,38 @@ public class EnrollmentController {
         this.enrollmentService = enrollmentService;
     }
 
+    // ══════════════════════ Enroll ══════════════════════
+
     @Operation(
             summary = "Enroll in a course",
-            description = "Enrolls the authenticated student in a course by courseId. Student is resolved from JWT token."
+            description = "Enrolls the authenticated student in a course. Body: { courseId: number }. " +
+                          "Accessible via /doEnrollment (legacy) and /enrollments (canonical)."
     )
     @PostMapping({"/doEnrollment", "/enrollments"})
     public ResponseEntity<EnrollResponse> doEnrollments(@RequestBody EnrollRequest enrollmentRequest) {
         return ResponseEntity.ok(enrollmentService.doEnrollments(enrollmentRequest));
     }
 
+    // ══════════════════════ List ══════════════════════
+
     @Operation(
             summary = "Get my enrollments",
-            description = "Returns all course enrollments for the authenticated student."
+            description = "Returns all course enrollments for the authenticated student. " +
+                          "Accessible via /getAllEnrollmentsForAuthStudent (legacy), /enrollments/my (old alias), " +
+                          "and /enrollments (canonical — used by frontend)."
     )
-    @GetMapping({"/getAllEnrollmentsForAuthStudent", "/enrollments/my"})
-    public ResponseEntity<List<EnrollmentDto>> getAllEnrollmentsForAuthStudent() {
-        return ResponseEntity.ok(enrollmentService.getAllEnrollments());
+    @GetMapping({"/getAllEnrollmentsForAuthStudent", "/enrollments/my", "/enrollments"})
+    public ResponseEntity<Map<String, Object>> getAllEnrollmentsForAuthStudent() {
+        List<EnrollmentDto> enrollments = enrollmentService.getAllEnrollments();
+        return ResponseEntity.ok(Map.of("enrollments", enrollments));
     }
+
+    // ══════════════════════ Progress ══════════════════════
 
     @Operation(
             summary = "Update lesson progress",
-            description = "Marks a lesson as completed or not. TODO: requires LessonProgress tracking table."
+            description = "Marks a specific lesson as done or undone for an enrollment. " +
+                          "Body: { lessonId: string, done: boolean }."
     )
     @PatchMapping("/enrollments/{enrollmentId}/progress")
     public ResponseEntity<EnrollResponse> updateLessonProgress(
