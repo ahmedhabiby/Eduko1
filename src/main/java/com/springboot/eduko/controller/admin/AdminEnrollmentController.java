@@ -58,6 +58,7 @@ public class AdminEnrollmentController {
         m.put("accessExpiresAt",   e.getAccessExpiresAt());
         m.put("completedAt",       e.getCompletedAt());
         m.put("createdAt",         e.getCreatedAt() != null ? e.getCreatedAt().toString() : null);
+        m.put("progressPercent",   e.getProgressPercent());
 
         if (e.getStudent() != null) {
             Student s = e.getStudent();
@@ -73,7 +74,7 @@ public class AdminEnrollmentController {
         return m;
     }
 
-    // ══════════════════════ CRUD ════════════════════════
+    // ══════════════════════ CRUD ══════════════════════
 
     @Operation(summary = "List all enrollments")
     @GetMapping
@@ -99,6 +100,7 @@ public class AdminEnrollmentController {
         e.setStatus("active");
         e.setPaymentStatus(course.getPrice() != null && course.getPrice() > 0 ? "pending_proof" : "free");
         e.setAccessGrantedAt(LocalDateTime.now().toString());
+        e.setProgressPercent(0);
         enrollmentRepo.save(e);
         auditLogService.log(actor(), "enrolled_student",
                 "Student ID: " + studentId + " in Course ID: " + courseId);
@@ -122,7 +124,7 @@ public class AdminEnrollmentController {
         return ResponseEntity.ok(Map.of("success", true));
     }
 
-    // ══════════════════════ WORKFLOW ════════════════════════
+    // ══════════════════════ WORKFLOW ══════════════════════
 
     @Operation(summary = "Approve enrollment",
                description = "Sets paymentStatus=approved, status=active, grants access.")
@@ -162,11 +164,56 @@ public class AdminEnrollmentController {
     public ResponseEntity<Map<String, Object>> updateAccess(@PathVariable Long id,
                                                             @RequestBody Map<String, String> body) {
         return enrollmentRepo.findById(id).map(e -> {
-            if (body.containsKey("accessLevel"))   e.setAccessLevel(body.get("accessLevel"));
+            if (body.containsKey("accessLevel"))     e.setAccessLevel(body.get("accessLevel"));
             if (body.containsKey("accessExpiresAt")) e.setAccessExpiresAt(body.get("accessExpiresAt"));
             enrollmentRepo.save(e);
             auditLogService.log(actor(), "updated_access", "Enrollment ID: " + id);
             return ResponseEntity.ok(Map.of("enrollment", toMap(e)));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    @Operation(summary = "Update lesson progress (admin override)",
+               description = "Marks a specific lesson as done/undone and recalculates progressPercent. " +
+                             "Body: { lessonId: string, done: boolean }")
+    @PatchMapping("/{id}/progress")
+    public ResponseEntity<Map<String, Object>> updateProgress(@PathVariable Long id,
+                                                              @RequestBody Map<String, Object> body) {
+        return enrollmentRepo.findById(id).map(e -> {
+            String lessonId = (String) body.get("lessonId");
+            boolean done    = Boolean.TRUE.equals(body.get("done"));
+
+            if (lessonId == null || lessonId.isBlank())
+                return ResponseEntity.badRequest()
+                        .<Map<String, Object>>body(Map.of("message", "lessonId is required"));
+
+            // Use existing lessonProgress map (stored as JSON in the column)
+            Map<String, Boolean> progress = e.getLessonProgress();
+            if (progress == null) progress = new HashMap<>();
+            progress.put(lessonId, done);
+            e.setLessonProgress(progress);
+
+            // Recalculate percent
+            int total    = progress.size();
+            int completed = (int) progress.values().stream().filter(Boolean::booleanValue).count();
+            int percent  = total > 0 ? Math.round((float) completed / total * 100) : 0;
+            e.setProgressPercent(percent);
+
+            // Auto-complete enrollment if 100%
+            if (percent == 100 && !"completed".equals(e.getStatus())) {
+                e.setStatus("completed");
+                e.setCompletedAt(LocalDateTime.now().toString());
+            }
+
+            enrollmentRepo.save(e);
+            auditLogService.log(actor(), "updated_progress",
+                    "Enrollment ID: " + id + " lesson=" + lessonId + " done=" + done);
+
+            return ResponseEntity.ok(Map.<String, Object>of(
+                    "progressPercent", percent,
+                    "lessonId", lessonId,
+                    "done", done
+            ));
         }).orElse(ResponseEntity.notFound().build());
     }
 }
