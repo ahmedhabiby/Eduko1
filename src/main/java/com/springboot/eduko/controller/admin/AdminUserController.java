@@ -2,6 +2,8 @@ package com.springboot.eduko.controller.admin;
 
 import com.springboot.eduko.model.BaseUser;
 import com.springboot.eduko.model.EduRoles;
+import com.springboot.eduko.model.Student;
+import com.springboot.eduko.model.Teacher;
 import com.springboot.eduko.repo.BaseUserRepo;
 import com.springboot.eduko.repo.EnrollmentRepo;
 import com.springboot.eduko.repo.RoleRepo;
@@ -50,7 +52,7 @@ public class AdminUserController {
         this.auditLogService = auditLogService;
     }
 
-    // ══════════════════════ HELPERS ════════════════════════
+    // ══════════════════════ HELPERS ══════════════════════
 
     private String actorName() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
@@ -104,7 +106,7 @@ public class AdminUserController {
         return m;
     }
 
-    // ══════════════════════ /admin/users ════════════════════════
+    // ══════════════════════ /admin/users ══════════════════════
 
     @Operation(summary = "List all users")
     @GetMapping("/users")
@@ -113,6 +115,69 @@ public class AdminUserController {
         return ResponseEntity.ok(Map.of("users", users));
     }
 
+    // ──────────────────────────────────────────────────────────────────
+    @Operation(summary = "Create user (admin panel)",
+               description = "Creates a student or teacher account directly. " +
+                             "Role defaults to 'student'. Returns the new user + tempPassword.")
+    @PostMapping("/users")
+    public ResponseEntity<Map<String, Object>> createUser(@RequestBody Map<String, Object> body) {
+        String email = (String) body.get("email");
+        if (email == null || email.isBlank())
+            return ResponseEntity.badRequest().body(Map.of("message", "email is required"));
+
+        if (baseUserRepo.findBaseUsersByEmail(email) != null)
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "Email already in use"));
+
+        String role = body.getOrDefault("role", "student").toString().toLowerCase();
+        String nameEn = (String) body.getOrDefault("nameEn", "");
+        String nameAr = (String) body.getOrDefault("nameAr", nameEn);
+
+        // Generate temp password: FirstName + "Pass@123" or random
+        String firstName = nameEn.contains(" ") ? nameEn.split(" ")[0] : nameEn;
+        String tempPassword = (body.containsKey("password"))
+                ? (String) body.get("password")
+                : (firstName.isBlank() ? "Eduko@" : capitalize(firstName)) + "Pass@123";
+
+        BaseUser newUser = new BaseUser();
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(tempPassword));
+        newUser.setStatus("active");
+
+        // Assign role
+        EduRoles eduRole = new EduRoles();
+        eduRole.setRole(role.toUpperCase());
+        eduRole.setBaseUser(newUser);
+        newUser.setRoles(List.of(eduRole));
+
+        if ("teacher".equals(role)) {
+            Teacher teacher = new Teacher();
+            teacher.setTeacherName(nameEn);
+            teacher.setBaseUser(newUser);
+            newUser.setTeacher(teacher);
+        } else {
+            Student student = new Student();
+            String[] parts = nameEn.split(" ", 2);
+            student.setFirstName(parts[0]);
+            student.setLastName(parts.length > 1 ? parts[1] : "");
+            student.setBaseUser(newUser);
+            newUser.setStudent(student);
+        }
+
+        baseUserRepo.save(newUser);
+        auditLogService.log(actorName(), "created_user", nameEn + " (" + role + ")");
+
+        Map<String, Object> result = new HashMap<>(toUserMap(newUser));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("user", result, "tempPassword", tempPassword));
+    }
+
+    private String capitalize(String s) {
+        if (s == null || s.isBlank()) return s;
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
+    }
+
+    // ──────────────────────────────────────────────────────────────────
     @Operation(summary = "Get current admin profile")
     @GetMapping("/users/me")
     public ResponseEntity<Map<String, Object>> me() {
@@ -178,7 +243,7 @@ public class AdminUserController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    // ══════════════════════ /admin/students ════════════════════
+    // ══════════════════════ /admin/students ══════════════════
 
     @Operation(summary = "List all students")
     @GetMapping("/students")
@@ -213,7 +278,7 @@ public class AdminUserController {
                 }).orElse(ResponseEntity.notFound().build());
     }
 
-    // ══════════════════════ /admin/teachers ════════════════════
+    // ══════════════════════ /admin/teachers ══════════════════
 
     @Operation(summary = "List all teachers")
     @GetMapping("/teachers")
