@@ -44,9 +44,10 @@ public class AdminAuthController {
     }
 
     // ──────────────────────────────────────────────────────────────────
+    // Accepts both /admin/auth/login (canonical) and /auth/login (frontend alias)
     @Operation(summary = "Admin Login",
                description = "Authenticate admin with email + password. Returns JWT token and admin profile.")
-    @PostMapping("/login")
+    @PostMapping({"/login", "/../../auth/login"})
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
 
         String email    = body.get("email");
@@ -103,8 +104,9 @@ public class AdminAuthController {
     }
 
     // ──────────────────────────────────────────────────────────────────
+    // Accepts both /admin/auth/logout (canonical) and /auth/logout (frontend alias)
     @Operation(summary = "Admin Logout", description = "Invalidates the current admin JWT.")
-    @PostMapping("/logout")
+    @PostMapping({"/logout", "/../../auth/logout"})
     public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
